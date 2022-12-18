@@ -9,11 +9,10 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      h1("deku")
-    )
+		mod_main_ui("main_1")
   )
 }
+
 
 #' Add external Resources to the Application
 #'
