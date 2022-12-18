@@ -14,8 +14,11 @@ mod_main_ui <- function(id){
   	title = "Deku",
   	id = "navbar_main",
   	home_tab(id, ns),
+  	log_tab(id, ns),
   	data_tab(id, ns),
-  	transform_tab(id, ns)
+  	transform_tab(id, ns),
+  	analysis_tab(id, ns),
+  	graph_tab(id, ns)
   )
 }
 
@@ -55,6 +58,10 @@ mod_main_server <- function(id){
 		output$delete_vars_table <- rhandsontable::renderRHandsontable({
 			get_delete_vars_table(data.frame(Vars = names(mtcars)))
 		})
+
+		output$show_log <- renderPrint({
+			p(shinipsum::random_text(nwords = 1e4))
+		})
   })
 }
 
@@ -78,12 +85,22 @@ home_tab <- function(id, ns) {
 }
 
 #' @noRd
+log_tab <- function(id, ns) {
+	tabPanel(
+		title = NULL,
+		icon = phosphoricons::ph("notepad"),
+		verbatimTextOutput(ns("show_log"))
+	)
+}
+
+#' @noRd
 data_tab <- function(id, ns) {
 	navbarMenu(
 		title = "Data",
 		# icon = phosphoricons::ph("file-csv"),
 		tabPanel(
-			"Import data", icon = phosphoricons::ph("upload"),
+			title = "Import data",
+			icon = phosphoricons::ph("upload"),
 			datamods::import_ui(
 				"data-import",
 				from = c("env", "file", "copypaste", "googlesheets", "url"),
@@ -92,7 +109,8 @@ data_tab <- function(id, ns) {
 			)
 		),
 		tabPanel(
-			"Export data", icon = phosphoricons::ph("download"),
+			title = "Export data",
+			icon = phosphoricons::ph("download"),
 			sidebarPanel(
 				selectInput(
 					ns("data"), "Select a dataset:",
@@ -111,7 +129,8 @@ data_tab <- function(id, ns) {
 		),
 		"---",
 		tabPanel(
-			"View codebook", icon = phosphoricons::ph("notebook"),
+			title = "View codebook",
+			icon = phosphoricons::ph("notebook"),
 			uiOutput(ns("show_codebook_info")),
 			alert_info(
 				"Change variable names, data type, or add labels in the table",
@@ -134,8 +153,11 @@ transform_tab <- function(id, ns) {
 	navbarMenu(
 		title = "Transform",
 		# icon = icon("table"),
+
+		"Column functions:",
+
 		tabPanel(
-			"Rename variables",
+			title = "Rename variables",
 			icon = phosphoricons::ph("kanban"),
 			alert_info(
 				"Add new names to corresponding variables in the table below, ",
@@ -157,8 +179,9 @@ transform_tab <- function(id, ns) {
 				class = "btn-danger", width = "100%"
 			)
 		),
+
 		tabPanel(
-			"Remove variables",
+			title = "Remove variables",
 			icon = phosphoricons::ph("backspace"),
 			alert_info(
 				"Right-click on corresponding rows below and delete them, ",
@@ -171,7 +194,133 @@ transform_tab <- function(id, ns) {
 					phosphoricons::ph("arrow-circle-right"), "Apply changes"
 				),
 				class = "btn-primary", width = "100%"
-			),
+			)
+		),
+
+		tabPanel(
+			title = "Order variables",
+			icon = phosphoricons::ph("list-numbers"),
+			p("Use drag and drop UI with multiple selection set to TRUE ",
+				"to rearrange vars"),
+			actionButton(
+				ns("validate"),
+				tagList(
+					phosphoricons::ph("arrow-circle-right"), "Apply changes"
+				),
+				class = "btn-primary", width = "100%"
+			)
+		),
+
+		tabPanel(
+			title = "Create or change variables",
+			icon = phosphoricons::ph("sidebar-simple"),
+			p("Use selectInput + textareaInput to feed into mutate()"),
+			actionButton(
+				ns("validate"),
+				tagList(
+					phosphoricons::ph("arrow-circle-right"), "Apply changes"
+				),
+				class = "btn-primary", width = "100%"
+			)
+		),
+
+		"---",
+		"Row functions:",
+
+		tabPanel(
+			title = "Subset observations",
+			icon = phosphoricons::ph("funnel"),
+			p("Use selectInput + textareaInput to feed into mutate()"),
+			actionButton(
+				ns("validate"),
+				tagList(
+					phosphoricons::ph("arrow-circle-right"), "Apply changes"
+				),
+				class = "btn-primary", width = "100%"
+			)
+		),
+
+		tabPanel(
+			title = "Order observations",
+			icon = icon("arrow-up-wide-short"),
+		),
+
+		"---",
+		"Change structure:",
+
+		tabPanel(
+			title = "Long to Wide",
+			icon = phosphoricons::ph("columns"),
+
+		),
+		tabPanel(
+			title = "Wide to Long",
+			icon = phosphoricons::ph("rows"),
 		)
+	)
+}
+
+
+
+#' @noRd
+analysis_tab <- function(id, ns) {
+	navbarMenu(
+		title = "Analyze",
+		# icon = icon("table"),
+
+		"Descriptives:",
+
+		tabPanel(
+			"Tabulation",
+			icon = phosphoricons::ph("squares-four")
+		),
+
+		tabPanel(
+			"Summary",
+			icon = phosphoricons::ph("dots-nine")
+		),
+
+		"Inferentials:",
+
+		tabPanel(
+			"Parametric Tests",
+			icon = phosphoricons::ph("hash-straight")
+		),
+		tabPanel(
+			"Non-parametric Tests",
+			icon = phosphoricons::ph("hash")
+		),
+		tabPanel(
+			"Generalized Linear Model",
+			icon = phosphoricons::ph("chart-line-up")
+		),
+		tabPanel(
+			"Mixed Model",
+			icon = icon("sitemap")
+		),
+		tabPanel(
+			"Survival",
+			icon = icon("timeline")
+		),
+	)
+}
+
+
+
+
+
+#' @noRd
+graph_tab <- function(id, ns) {
+	navbarMenu(
+		title = "Graphs",
+		# icon = icon("table"),
+
+		"Univariate:",
+		tabPanel("Bar"),
+		tabPanel("Line"),
+		tabPanel("High-low"),
+		tabPanel("Boxplot"),
+		tabPanel("Histogram"),
+
 	)
 }

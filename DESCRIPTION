@@ -17,6 +17,7 @@ Imports:
     phosphoricons,
     reactable,
     rhandsontable,
+    shinipsum,
     shiny (>= 1.7.4),
     shinyWidgets
 Suggests: 
