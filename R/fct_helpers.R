@@ -69,3 +69,23 @@ get_rename_table <- function(data) {
 		rhandsontable::hot_col(1, readOnly = TRUE)
 }
 
+
+#' Create rhandsontable to delete variables
+#'
+#' @description Create rhandsontable with edit mode
+#' @param data data.frame
+#' @return `reactable`
+#'
+#' @importFrom magrittr `%>%`
+#'
+#' @noRd
+get_delete_vars_table <- function(data) {
+	rhandsontable::rhandsontable(data, stretchH = "all", height = 400) %>%
+		rhandsontable::hot_context_menu(
+			allowRowEdit = TRUE,
+			allowColEdit = FALSE
+		) %>%
+		rhandsontable::hot_col(1:ncol(data), readOnly = TRUE) %>%
+		rhandsontable::hot_cols(colWidths = 400)
+}
+

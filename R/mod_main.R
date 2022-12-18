@@ -44,15 +44,17 @@ mod_main_server <- function(id){
     	))
     )
 
-    output$codebook_table <- reactable::renderReactable({
+    output$codebook_table <- rhandsontable::renderRHandsontable({
     	get_codebook_table(mtcars[1:10, 1:6])
     })
 
-    output$rename_table <- reactable::renderReactable({
+    output$rename_table <- rhandsontable::renderRHandsontable({
     	get_rename_table(mtcars)
     })
 
-
+		output$delete_vars_table <- rhandsontable::renderRHandsontable({
+			get_delete_vars_table(data.frame(Vars = names(mtcars)))
+		})
   })
 }
 
@@ -158,7 +160,18 @@ transform_tab <- function(id, ns) {
 		tabPanel(
 			"Remove variables",
 			icon = phosphoricons::ph("backspace"),
-			h2("Remove variables")
+			alert_info(
+				"Right-click on corresponding rows below and delete them, ",
+				"then apply changes by clicking the button."
+			),
+			rhandsontable::rHandsontableOutput(ns("delete_vars_table")),
+			actionButton(
+				ns("validate"),
+				tagList(
+					phosphoricons::ph("arrow-circle-right"), "Apply changes"
+				),
+				class = "btn-primary", width = "100%"
+			),
 		)
 	)
 }
