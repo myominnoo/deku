@@ -23,6 +23,7 @@ usethis::use_package("datamods")
 usethis::use_package("phosphoricons")
 usethis::use_package("shinyWidgets")
 usethis::use_package("reactable")
+usethis::use_package("rhandsontable")
 
 
 

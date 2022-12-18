@@ -30,15 +30,29 @@ mod_main_server <- function(id){
     ## dataset status on load
     # output$show_active_dataname <- renderUI(alert_info("No dataset."))
     output$show_active_dataname <- renderUI(
-    	alert_success(sprintf(
-    		"Active dataset: %s with %s rows and %s columns",
-    		"mtcars", nrow(mtcars), ncol(mtcars)
+    	alert_success(sprintf("Active dataset: %s", "mtcars"))
+    )
+
+    ## show active dataset after data import
+    output$show_active_dataset <- reactable::renderReactable({
+    	get_reactable(mtcars)
+    })
+
+    output$show_codebook_info <- renderUI(
+    	alert_info(sprintf(
+    		"%s has %s rows and %s columns.", "mtcars", nrow(mtcars), ncol(mtcars)
     	))
     )
 
-    output$show_active_dataset <- reactable::renderReactable({
-    	show_reactable(mtcars)
+    output$codebook_table <- reactable::renderReactable({
+    	get_codebook_table(mtcars[1:10, 1:6])
     })
+
+    output$rename_table <- reactable::renderReactable({
+    	get_rename_table(mtcars)
+    })
+
+
   })
 }
 
@@ -76,11 +90,39 @@ data_tab <- function(id, ns) {
 			)
 		),
 		tabPanel(
-			"Export data", icon = phosphoricons::ph("download")
+			"Export data", icon = phosphoricons::ph("download"),
+			sidebarPanel(
+				selectInput(
+					ns("data"), "Select a dataset:",
+					choices = c("mtcars", "iris", "infert")
+				),
+				selectInput(
+					ns("file_type"), "File Type:",
+					choices = c("xlsx", "xls", "dta")
+				),
+				hr(),
+				downloadButton(
+					ns("download"), "Download",
+					class = "btn-primary", style = "width:100%;"
+				)
+			)
 		),
 		"---",
 		tabPanel(
-			"View codebook", icon = phosphoricons::ph("notebook")
+			"View codebook", icon = phosphoricons::ph("notebook"),
+			uiOutput(ns("show_codebook_info")),
+			alert_info(
+				"Change variable names, data type, or add labels in the table",
+				" below, then apply changes by clicking the button."
+			),
+			rhandsontable::rHandsontableOutput(ns("codebook_table")),
+			shiny::actionButton(
+				ns("validate"),
+				tagList(
+					phosphoricons::ph("arrow-circle-right"), "Apply changes"
+				),
+				class = "btn-primary", width = "100%"
+			)
 		)
 	)
 }
@@ -93,12 +135,25 @@ transform_tab <- function(id, ns) {
 		tabPanel(
 			"Rename variables",
 			icon = phosphoricons::ph("kanban"),
-			h2("Rename variables")
-		),
-		tabPanel(
-			"Clean variable names",
-			icon = phosphoricons::ph("textbox"),
-			h2("Clean variable names")
+			alert_info(
+				"Add new names to corresponding variables in the table below, ",
+				"then apply changes by clicking the button."
+			),
+			rhandsontable::rHandsontableOutput(ns("rename_table")),
+			actionButton(
+				ns("validate"),
+				tagList(
+					phosphoricons::ph("arrow-circle-right"), "Apply changes"
+				),
+				class = "btn-primary", width = "100%"
+			),
+			actionButton(
+				ns("clean"),
+				tagList(
+					phosphoricons::ph("textbox"), "Clean all names"
+				),
+				class = "btn-danger", width = "100%"
+			)
 		),
 		tabPanel(
 			"Remove variables",

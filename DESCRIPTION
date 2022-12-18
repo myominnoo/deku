@@ -13,8 +13,11 @@ Imports:
     config (>= 0.3.1),
     datamods,
     golem (>= 0.3.5),
+    htmlwidgets,
+    magrittr,
     phosphoricons,
     reactable,
+    rhandsontable,
     shiny (>= 1.7.4),
     shinyWidgets
 Suggests: 
