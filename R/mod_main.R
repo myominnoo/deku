@@ -49,8 +49,8 @@ mod_main_server <- function(id){
 home_tab <- function(id) {
 	tabPanel(
 		title = NULL,
-		icon = icon("house"),
-		h2("Home menu")
+		icon = phosphoricons::ph("table"),
+		tableOutput("show_active_dataset")
 	)
 }
 
@@ -73,9 +73,6 @@ data_tab <- function(id) {
 		),
 		"---",
 		tabPanel(
-			"Show active dataset", icon = phosphoricons::ph("table")
-		),
-		tabPanel(
 			"View codebook", icon = phosphoricons::ph("notebook")
 		)
 	)
@@ -86,38 +83,14 @@ transform_tab <- function(id) {
 	navbarMenu(
 		title = "Transform",
 		# icon = icon("table"),
-		# tabPanel(
-		# 	"Rename variables", icon = phosphoricons::ph("kanban"), h2("Rename variables")
-		# ),
-		# tabPanel(
-		# 	"Clean variable names", icon = phosphoricons::ph("textbox"), h2("Clean variable names")
-		# ),
-		# tabPanel(
-		# 	"Remove variables", icon = phosphoricons::ph("backspace"), h2("Remove variables")
+		tabPanel(
+			"Rename variables", icon = phosphoricons::ph("kanban"), h2("Rename variables")
+		),
+		tabPanel(
+			"Clean variable names", icon = phosphoricons::ph("textbox"), h2("Clean variable names")
+		),
+		tabPanel(
+			"Remove variables", icon = phosphoricons::ph("backspace"), h2("Remove variables")
 		)
-}
-
-alert_info <- function(...) {
-	shinyWidgets::alert(
-		status = "info", phosphoricons::ph("info"),
-		...
-	)
-}
-alert_success <- function(...) {
-	shinyWidgets::alert(
-		status = "success", phosphoricons::ph("check"),
-		...
-	)
-}
-alert_danger <- function(...) {
-	shinyWidgets::alert(
-		status = "danger", phosphoricons::ph("warning"),
-		...
-	)
-}
-alert_warning <- function(...) {
-	shinyWidgets::alert(
-		status = "warning", phosphoricons::ph("warning-octagon"),
-		...
 	)
 }
