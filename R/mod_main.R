@@ -13,10 +13,9 @@ mod_main_ui <- function(id){
   	theme = bslib::bs_theme(5, "flatly"),
   	title = "Deku",
   	id = "navbar_main",
-  	header = uiOutput(ns("show_active_dataname")),
-  	home_tab(id),
-  	data_tab(id),
-  	transform_tab(id)
+  	home_tab(id, ns),
+  	data_tab(id, ns),
+  	transform_tab(id, ns)
   )
 }
 
@@ -28,11 +27,18 @@ mod_main_server <- function(id){
     ns <- session$ns
     env <- reactiveValues(data = NULL, dataname = NULL, log = NULL)
 
-
     ## dataset status on load
+    # output$show_active_dataname <- renderUI(alert_info("No dataset."))
     output$show_active_dataname <- renderUI(
-    	alert_info("No dataset.")
+    	alert_success(sprintf(
+    		"Active dataset: %s with %s rows and %s columns",
+    		"mtcars", nrow(mtcars), ncol(mtcars)
+    	))
     )
+
+    output$show_active_dataset <- reactable::renderReactable({
+    	show_reactable(mtcars)
+    })
   })
 }
 
@@ -46,16 +52,17 @@ mod_main_server <- function(id){
 # ui helpers --------------------------------------------------------------
 
 #' @noRd
-home_tab <- function(id) {
+home_tab <- function(id, ns) {
 	tabPanel(
 		title = NULL,
 		icon = phosphoricons::ph("table"),
-		tableOutput("show_active_dataset")
+		uiOutput(ns("show_active_dataname")),
+		reactable::reactableOutput(ns("show_active_dataset"))
 	)
 }
 
 #' @noRd
-data_tab <- function(id) {
+data_tab <- function(id, ns) {
 	navbarMenu(
 		title = "Data",
 		# icon = phosphoricons::ph("file-csv"),
@@ -79,18 +86,24 @@ data_tab <- function(id) {
 }
 
 #' @noRd
-transform_tab <- function(id) {
+transform_tab <- function(id, ns) {
 	navbarMenu(
 		title = "Transform",
 		# icon = icon("table"),
 		tabPanel(
-			"Rename variables", icon = phosphoricons::ph("kanban"), h2("Rename variables")
+			"Rename variables",
+			icon = phosphoricons::ph("kanban"),
+			h2("Rename variables")
 		),
 		tabPanel(
-			"Clean variable names", icon = phosphoricons::ph("textbox"), h2("Clean variable names")
+			"Clean variable names",
+			icon = phosphoricons::ph("textbox"),
+			h2("Clean variable names")
 		),
 		tabPanel(
-			"Remove variables", icon = phosphoricons::ph("backspace"), h2("Remove variables")
+			"Remove variables",
+			icon = phosphoricons::ph("backspace"),
+			h2("Remove variables")
 		)
 	)
 }
