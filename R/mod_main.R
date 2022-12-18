@@ -13,7 +13,10 @@ mod_main_ui <- function(id){
   	theme = bslib::bs_theme(5, "flatly"),
   	title = "Deku",
   	id = "navbar_main",
-  	home_tab,
+  	header = uiOutput(ns("show_active_dataname")),
+  	home_tab(id),
+  	data_tab(id),
+  	transform_tab(id)
   )
 }
 
@@ -23,7 +26,13 @@ mod_main_ui <- function(id){
 mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
+    env <- reactiveValues(data = NULL, dataname = NULL, log = NULL)
 
+
+    ## dataset status on load
+    output$show_active_dataname <- renderUI(
+    	alert_info("No dataset.")
+    )
   })
 }
 
@@ -36,25 +45,79 @@ mod_main_server <- function(id){
 
 # ui helpers --------------------------------------------------------------
 
-home_tab <- tabPanel(
-	title = "Home",
-	icon = icon("house"),
-	h2("Home menu")
-)
-# navbarMenu(
-# 	title = "Data Management",
-# 	icon = icon("table"),
-# 	tabPanel("Import data", icon = phosphoricons::ph("upload"),
-# 					 datamods::import_ui(
-# 					 	"data-import",
-# 					 	from = c("env", "file", "copypaste", "googlesheets", "url"),
-# 					 	file_extensions = c(".csv", ".txt", ".xls", ".xlsx", ".rds",
-# 					 											".fst", ".sas7bdat", ".sav", ".dta")
-# 					 )),
-# 	tabPanel("Export data", icon = phosphoricons::ph("download"), h2("Export data")),
-# 	"---",
-# 	tabPanel("Rename variables", icon = phosphoricons::ph("kanban"), h2("Rename variables")),
-# 	tabPanel("Clean variable names", icon = phosphoricons::ph("textbox"), h2("Clean variable names")),
-# 	tabPanel("Remove variables", icon = phosphoricons::ph("backspace"), h2("Remove variables"))
-# )
+#' @noRd
+home_tab <- function(id) {
+	tabPanel(
+		title = NULL,
+		icon = icon("house"),
+		h2("Home menu")
+	)
+}
 
+#' @noRd
+data_tab <- function(id) {
+	navbarMenu(
+		title = "Data",
+		# icon = phosphoricons::ph("file-csv"),
+		tabPanel(
+			"Import data", icon = phosphoricons::ph("upload"),
+			datamods::import_ui(
+				"data-import",
+				from = c("env", "file", "copypaste", "googlesheets", "url"),
+				file_extensions = c(".csv", ".txt", ".xls", ".xlsx", ".rds",
+														".fst", ".sas7bdat", ".sav", ".dta")
+			)
+		),
+		tabPanel(
+			"Export data", icon = phosphoricons::ph("download")
+		),
+		"---",
+		tabPanel(
+			"Show active dataset", icon = phosphoricons::ph("table")
+		),
+		tabPanel(
+			"View codebook", icon = phosphoricons::ph("notebook")
+		)
+	)
+}
+
+#' @noRd
+transform_tab <- function(id) {
+	navbarMenu(
+		title = "Transform",
+		# icon = icon("table"),
+		# tabPanel(
+		# 	"Rename variables", icon = phosphoricons::ph("kanban"), h2("Rename variables")
+		# ),
+		# tabPanel(
+		# 	"Clean variable names", icon = phosphoricons::ph("textbox"), h2("Clean variable names")
+		# ),
+		# tabPanel(
+		# 	"Remove variables", icon = phosphoricons::ph("backspace"), h2("Remove variables")
+		)
+}
+
+alert_info <- function(...) {
+	shinyWidgets::alert(
+		status = "info", phosphoricons::ph("info"),
+		...
+	)
+}
+alert_success <- function(...) {
+	shinyWidgets::alert(
+		status = "success", phosphoricons::ph("check"),
+		...
+	)
+}
+alert_danger <- function(...) {
+	shinyWidgets::alert(
+		status = "danger", phosphoricons::ph("warning"),
+		...
+	)
+}
+alert_warning <- function(...) {
+	shinyWidgets::alert(
+		status = "warning", phosphoricons::ph("warning-octagon"),
+		...
+	)
+}
