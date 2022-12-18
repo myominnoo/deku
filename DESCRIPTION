@@ -14,7 +14,8 @@ Imports:
     datamods,
     golem (>= 0.3.5),
     phosphoricons,
-    shiny (>= 1.7.4)
+    shiny (>= 1.7.4),
+    shinyWidgets
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

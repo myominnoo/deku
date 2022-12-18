@@ -21,6 +21,7 @@ attachment::att_amend_desc()
 usethis::use_package("bslib")
 usethis::use_package("datamods")
 usethis::use_package("phosphoricons")
+usethis::use_package("shinyWidgets")
 
 
 
